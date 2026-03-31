@@ -1,0 +1,33 @@
+name: Deploy to Green Environment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-green:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Copy green.html to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.PRIVATE_KEY }}
+          source: "green.html"
+          target: "/home/ubuntu/"
+
+      - name: Update website on Green EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            sudo mv /home/ubuntu/green.html /var/www/html/index.html
+            sudo systemctl restart apache2
