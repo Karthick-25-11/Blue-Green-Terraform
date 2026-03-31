@@ -29,12 +29,12 @@ resource "aws_lb_listener" "listener" {
   forward {
     target_group {
       arn    = aws_lb_target_group.blue.arn
-      weight = 50
+      weight = 10
     }
 
     target_group {
       arn    = aws_lb_target_group.green.arn
-      weight = 50
+      weight = 90
     }
   }
 }
